@@ -1,0 +1,23 @@
+<table>
+    <thead>
+        <tr>
+            <th style="width: 40px;">#</th>
+            <th>Team</th>
+            <th style="width: 80px;">Win %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for team in rankings[:10] %}
+        <tr>
+            <td class="rank">{{ loop.index }}</td>
+            <td class="team-name">{{ team.team }}</td>
+            <td>
+                <span class="win-pct">{{ team.win_rate }}%</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ team.win_rate }}%;"></div>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

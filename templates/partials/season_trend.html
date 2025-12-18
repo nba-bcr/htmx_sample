@@ -1,0 +1,13 @@
+<h3 class="section-title" style="margin-bottom: 20px;">Points by Season</h3>
+<div style="max-height: 350px; overflow-y: auto;">
+{% for season in seasons[-15:] %}
+<div class="chart-bar">
+    <div class="chart-label">{{ season.season }}</div>
+    <div class="chart-track">
+        <div class="chart-fill" style="width: {{ ((season.avg_total - 180) / 50 * 100) | int }}%;">
+            {{ season.avg_total | round(1) }} pts
+        </div>
+    </div>
+</div>
+{% endfor %}
+</div>

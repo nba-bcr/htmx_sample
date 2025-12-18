@@ -1,0 +1,46 @@
+<div class="comparison">
+    <div class="comparison-box">
+        <div class="comparison-title">{{ team }}</div>
+        <div class="comparison-stats">
+            <div class="comparison-stat">
+                <div class="num">{{ total_wins }}</div>
+                <div class="label">Wins</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ total_games }}</div>
+                <div class="label">Games</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num" style="color: #22c55e;">{{ win_rate }}%</div>
+                <div class="label">Win Rate</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ avg_points }}</div>
+                <div class="label">Avg Pts</div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="comparison-title" style="text-align: center; margin-bottom: 16px;">Recent Seasons</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Season</th>
+                    <th>Record</th>
+                    <th style="text-align: right;">Win %</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in seasons %}
+                <tr>
+                    <td style="color: #888;">{{ s.season }}</td>
+                    <td>{{ s.wins }}-{{ s.games - s.wins }}</td>
+                    <td style="text-align: right;">
+                        <span class="win-pct">{{ s.win_rate }}%</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

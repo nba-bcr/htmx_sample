@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Dashboard</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f0f;
+            min-height: 100vh;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #262626;
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-card .value.accent {
+            color: #22c55e;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Cards */
+        .card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #262626;
+        }
+
+        /* Two column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #666;
+            border-bottom: 1px solid #262626;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #1f1f1f;
+            font-size: 0.95rem;
+        }
+
+        tr:hover {
+            background: #222;
+        }
+
+        .team-name {
+            font-weight: 600;
+        }
+
+        .rank {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 2px;
+        }
+
+        .win-pct {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        /* Score display */
+        .score {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .score-num {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .score-num.winner {
+            color: #22c55e;
+        }
+
+        .vs {
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        .total-score {
+            background: #22c55e;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Select */
+        select {
+            background: #262626;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Chart bars */
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .chart-label {
+            width: 50px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .chart-track {
+            flex: 1;
+            height: 28px;
+            background: #262626;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .chart-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Comparison */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .comparison-box {
+            text-align: center;
+        }
+
+        .comparison-title {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .comparison-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-stat .num {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .comparison-stat .label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .htmx-request .loading {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>NBA Dashboard</h1>
+            <p class="subtitle">2000 - 2025 Season Statistics</p>
+        </header>
+
+        <!-- Overview Stats -->
+        <div id="overview"
+             hx-get="/api/stats/overview"
+             hx-trigger="load"
+             hx-swap="innerHTML">
+            <div class="loading">Loading...</div>
+        </div>
+
+        <!-- Season Trend & Playoffs Comparison -->
+        <div class="two-col section">
+            <div class="card"
+                 hx-get="/api/stats/season-trend"
+                 hx-trigger="load"
+                 hx-swap="innerHTML">
+                <div class="loading">Loading...</div>
+            </div>
+
+            <div class="card"
+                 hx-get="/api/stats/playoffs-vs-regular"
+                 hx-trigger="load"
+                 hx-swap="innerHTML">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Team Rankings & High Scoring -->
+        <div class="two-col section">
+            <div class="card">
+                <div class="section-header">
+                    <h3 class="section-title">Team Rankings</h3>
+                    <select name="season"
+                            hx-get="/api/stats/team-rankings"
+                            hx-trigger="change"
+                            hx-target="#rankings-table"
+                            hx-swap="innerHTML">
+                        <option value="">All Seasons</option>
+                        {% for season in seasons %}
+                        <option value="{{ season }}">{{ season }}-{{ season + 1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="rankings-table"
+                     hx-get="/api/stats/team-rankings"
+                     hx-trigger="load"
+                     hx-swap="innerHTML">
+                    <div class="loading">Loading...</div>
+                </div>
+            </div>
+
+            <div class="card"
+                 hx-get="/api/stats/high-scoring"
+                 hx-trigger="load"
+                 hx-swap="innerHTML">
+                <div class="loading">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Team Detail -->
+        <div class="section">
+            <div class="card">
+                <div class="section-header">
+                    <h3 class="section-title">Team Analysis</h3>
+                    <select name="team"
+                            hx-get="/api/stats/team-detail"
+                            hx-trigger="change"
+                            hx-target="#team-detail"
+                            hx-swap="innerHTML">
+                        <option value="">Select Team</option>
+                        {% for team in teams %}
+                        <option value="{{ team }}">{{ team }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="team-detail">
+                    <p style="color: #666; text-align: center; padding: 60px;">
+                        Select a team to view detailed statistics
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

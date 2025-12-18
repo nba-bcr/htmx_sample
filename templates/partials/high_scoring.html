@@ -1,0 +1,27 @@
+<h3 class="section-title" style="margin-bottom: 20px;">Highest Scoring Games</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Matchup</th>
+            <th style="text-align: right;">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for game in games[:8] %}
+        <tr>
+            <td style="color: #666; font-size: 0.85rem;">{{ game.date }}</td>
+            <td>
+                <span class="team-name">{{ game.home_team }}</span>
+                <span class="score-num {% if game.home_points > game.away_points %}winner{% endif %}">{{ game.home_points }}</span>
+                <span class="vs">vs</span>
+                <span class="score-num {% if game.away_points > game.home_points %}winner{% endif %}">{{ game.away_points }}</span>
+                <span class="team-name">{{ game.away_team }}</span>
+            </td>
+            <td style="text-align: right;">
+                <span class="total-score">{{ game.total }}</span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

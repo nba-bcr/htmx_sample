@@ -1,0 +1,45 @@
+<h3 class="section-title" style="margin-bottom: 24px;">Regular vs Playoffs</h3>
+<div class="comparison">
+    <div class="comparison-box">
+        <div class="comparison-title">Regular Season</div>
+        <div class="comparison-stats">
+            <div class="comparison-stat">
+                <div class="num">{{ "{:,}".format(stats.regular.games) }}</div>
+                <div class="label">Games</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ stats.regular.avg_total }}</div>
+                <div class="label">Avg Points</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num" style="color: #3b82f6;">{{ stats.regular.home_win_rate }}%</div>
+                <div class="label">Home Win</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ stats.regular.avg_home }}</div>
+                <div class="label">Avg Home Pts</div>
+            </div>
+        </div>
+    </div>
+    <div class="comparison-box">
+        <div class="comparison-title">Playoffs</div>
+        <div class="comparison-stats">
+            <div class="comparison-stat">
+                <div class="num">{{ "{:,}".format(stats.playoffs.games) }}</div>
+                <div class="label">Games</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ stats.playoffs.avg_total }}</div>
+                <div class="label">Avg Points</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num" style="color: #22c55e;">{{ stats.playoffs.home_win_rate }}%</div>
+                <div class="label">Home Win</div>
+            </div>
+            <div class="comparison-stat">
+                <div class="num">{{ stats.playoffs.avg_home }}</div>
+                <div class="label">Avg Home Pts</div>
+            </div>
+        </div>
+    </div>
+</div>
